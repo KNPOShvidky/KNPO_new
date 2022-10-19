@@ -19,8 +19,8 @@ int main() {
 	vector<string> arrayStrings;
 
 	//Название файла с входными данными
-	string nameFileInput = "inpt.txt";
-
+	string nameFileInput = "input.txt";
+	
 	try
 	{
 		//Открываем файел
@@ -187,57 +187,68 @@ vector<string> divideIntoClasses(vector<string>& arrayStrings)
 
 	//Функция, разделяющая строки и данные
 	razelenieDannyx(arrayStrings, rules, data);
-
+	
 	//Итоговый резултататат
 	vector<string> result;
 	for (int i = 0; i < rules.size(); i++)
 	{
-		if (rules[i].find("HasProp"))
+		cout << "\nHAS_PROP V " << i << " STROKE = "<< rules[i].find("HasProp") << endl << endl;
+
+
+		if (rules[i].find("HasProp")!= string::npos)
 		{
 			result.resize(i + 1);
 			result[i] = hasProp(rules[i], data);
 			continue;
 		}
-		if (rules[i].find("HasAmount"))
+
+		if (rules[i].find("HasAmount")!= string::npos)
 		{
 			result.resize(i + 1);
 			result[i] = hasAmount(rules[i], data);
 			continue;
 		}
-		if (rules[i].find("HasOne"))
+
+		if (rules[i].find("HasOne")!= string::npos)
 		{
 			result.resize(i + 1);
 			result[i] = hasOne(rules[i], data);
 			continue;
 		}
-		if (rules[i].find("HasAll"))
+
+		if (rules[i].find("HasAll")!= string::npos)
 		{
 			result.resize(i + 1);
 			result[i] = hasAll(rules[i], data);
 			continue;
 		}
+		
 	}
+
+	return result;
 }
 //
 
 void razelenieDannyx(vector<string>& arrayStrings, vector<string>& rules, vector<string>& data) {
 	
-	int i = 1;
-	while (arrayStrings[i] != "Данные:") {
+	int i =0;
+	while (arrayStrings[i+1] != "Данные:") {
 		rules.resize(i + 1);
-		rules[i] = arrayStrings[i];
+		rules[i] = arrayStrings[i+1];
 		i++;
 	}
-
+	
 
 	int sizeArray = arrayStrings.size();
 
 	int k = 0;
-	for (int j = i+1; i < sizeArray; j++, k++)
+	for (int j = i+2; j < sizeArray; j++)
 	{
 		data.resize(k + 1);
 		data[k] = arrayStrings[j];
+		k++;
 	}
+	
 	
 }
 //Говно HasProp
@@ -249,20 +260,69 @@ void razelenieDannyx(vector<string>& arrayStrings, vector<string>& rules, vector
 
 string hasProp(string rules, vector<string>& data)
 {
+	cout << "Rules= " << rules<<endl<<endl;
+	//Индекс вхождения слова HasProp в rules
+	int x = rules.find("HasProp");
 
+	//Индекс начала вхождения названия свойства в rules
+	x += size("HasProp");
+	
+	int rul_size = rules.size()-x;
+	//Строка, содержащая название свойства
+
+	string Nalichie = rules.substr(x,rul_size);
+
+	//Индекс вхождения первой запятой в rules
+	int g = rules.find(",");
+	cout << "Nalichie= " << Nalichie << endl;
+
+	//Строка, содержащая название класса
+	string Klass = rules.substr(0, g);
+
+	//Задаём результат
+	string res = "\""+Klass + "\": ";
+
+	int kol_vo_el = 0;
+
+	for (int d = 0; d < data.size(); d++) {
+		cout << d << "-е Данное = " << data[d] << endl;
+	}
+
+	for (int i = 0; i < data.size(); i++)
+	{
+		if (data[i].find(Nalichie)!= string::npos)
+		{
+
+			int gov = data[i].find(":");
+
+			string nameEl = data[i].substr(0, gov);
+
+			if (kol_vo_el == 0) {
+				res += nameEl;
+			}
+			if (kol_vo_el!=0) {
+				res += ", "+nameEl;
+			}
+				kol_vo_el++;
+		}
+		
+	}
+
+	cout << res<<endl;
+	return Klass;
 }
 
 string hasAmount(string rules, vector<string>& data)
 {
-
+	return rules;
 }
 
 string hasOne(string rules, vector<string>& data)
 {
-
+	return rules;
 }
 
 string hasAll(string rules, vector<string>& data)
 {
-
+	return rules;
 }
