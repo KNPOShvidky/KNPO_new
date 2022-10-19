@@ -318,17 +318,25 @@ string hasProp(string rules, vector<string>& data)
 
 string hasAmount(string rules, vector<string>& data)
 {
-	//Индекс вхождения слова HasProp в rules
-	int x = rules.find("HasProp");
+	//Индекс вхождения слова HasAmount в rules
+	int x = rules.find("HasAmount");
 
+	int indexColZn = rules.rfind(",");
+	cout << "Posl Zap = " << indexColZn << endl;
 	//Индекс начала вхождения названия свойства в rules
-	x += size("HasProp");
+	x += size("HasAmount");
+	
 
-	int rul_size = rules.size() - x;
+	cout << "findAmount = " << x << endl;
+
+	//int rul_size = indexColZn - x;
 	//Строка, содержащая название свойства
+	int c = rules.size()-indexColZn;
+	int y = rules.size()-c;
+	y -= x;
+	string Nalichie = rules.substr(x, y);
 
-	string Nalichie = rules.substr(x, rul_size);
-
+	cout << "Nalichie = " << Nalichie << endl;
 	//Индекс вхождения первой запятой в rules
 	int g = rules.find(",");
 	//cout << "Nalichie= " << Nalichie << endl;
@@ -342,22 +350,38 @@ string hasAmount(string rules, vector<string>& data)
 	int kol_vo_el = 0;
 
 
+	//Выяснить количество значений в правиле
+	
+	string ColZn_str = rules.substr((indexColZn+1),rules.size());
+	int ColZn_int = stoi(ColZn_str);
+	//int count = .count();
+	cout << "Kol-vo = " << ColZn_int<<endl;
+
 	for (int i = 0; i < data.size(); i++)
-	{
+	{	
 		if (data[i].find(Nalichie) != string::npos)
 		{
-
-			int gov = data[i].find(":");
-
-			string nameEl = data[i].substr(0, gov);
-
-			if (kol_vo_el == 0) {
-				res += nameEl;
+			int indexZnach = data[i].find(Nalichie) + Nalichie.size()+1;
+			cout << "indexZnach = " << indexZnach << endl;
+			int col_zap = 0;
+			for (int t = indexZnach; data[i][t] != ']'; t++) {
+				if (data[i][t] == ',')
+					col_zap++;
 			}
-			if (kol_vo_el != 0) {
-				res += ", " + nameEl;
+
+			if (col_zap == ColZn_int-1) {
+
+				int gov = data[i].find(":");
+				string nameEl = data[i].substr(0, gov);
+
+				if (kol_vo_el == 0) {
+					res += nameEl;
+				}
+				if (kol_vo_el != 0) {
+					res += ", " + nameEl;
+				}
+				kol_vo_el++;
 			}
-			kol_vo_el++;
 		}
 
 	}
@@ -365,7 +389,7 @@ string hasAmount(string rules, vector<string>& data)
 		res += " - ";
 	}
 
-	// cout << res << endl;
+	 cout << res << endl;
 	return res;
 }
 
@@ -377,4 +401,39 @@ string hasOne(string rules, vector<string>& data)
 string hasAll(string rules, vector<string>& data)
 {
 	return rules;
+}
+
+bool correctRules(string str) {
+	bool res=false;
+	return res;
+
+}
+
+bool correctData(string str) {
+	bool res = true;
+
+	//В строке данных нет двоеточия
+	if (str.find("=") == string::npos) {
+		res = false;
+	}else if (str.find(":") == string::npos) {
+		res = false;
+	}
+	else if (str.find("[") == string::npos || str.find("]") == string::npos) {
+		res = false;
+	}
+	else if (str.find("[") == string::npos || str.find("]") == string::npos) {
+		res = false;
+	}
+	
+	/*else if (str.find("=") < str.find(":") || str.find("=")  str.find("[")||str.find("=") < str.find("]")) {
+		res = false;
+	}*/
+
+	for (int i = 0; i < str.size(); i++) {
+
+	}
+
+
+		return res;
+
 }
