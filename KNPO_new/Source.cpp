@@ -225,9 +225,9 @@ vector<string> divideIntoClasses(vector<string>& arrayStrings)
 		
 	}
 
-	/*for (int k = 0; k < result.size(); k++) {
+	for (int k = 0; k < result.size(); k++) {
 		cout << "Result: " << result[k] << endl;
-	}*/
+	}
 
 	return result;
 }
@@ -322,12 +322,12 @@ string hasAmount(string rules, vector<string>& data)
 	int x = rules.find("HasAmount");
 
 	int indexColZn = rules.rfind(",");
-	cout << "Posl Zap = " << indexColZn << endl;
+	
 	//Индекс начала вхождения названия свойства в rules
 	x += size("HasAmount");
 	
 
-	cout << "findAmount = " << x << endl;
+	
 
 	//int rul_size = indexColZn - x;
 	//Строка, содержащая название свойства
@@ -336,7 +336,7 @@ string hasAmount(string rules, vector<string>& data)
 	y -= x;
 	string Nalichie = rules.substr(x, y);
 
-	cout << "Nalichie = " << Nalichie << endl;
+	
 	//Индекс вхождения первой запятой в rules
 	int g = rules.find(",");
 	//cout << "Nalichie= " << Nalichie << endl;
@@ -355,14 +355,14 @@ string hasAmount(string rules, vector<string>& data)
 	string ColZn_str = rules.substr((indexColZn+1),rules.size());
 	int ColZn_int = stoi(ColZn_str);
 	//int count = .count();
-	cout << "Kol-vo = " << ColZn_int<<endl;
+	
 
 	for (int i = 0; i < data.size(); i++)
 	{	
 		if (data[i].find(Nalichie) != string::npos)
 		{
 			int indexZnach = data[i].find(Nalichie) + Nalichie.size()+1;
-			cout << "indexZnach = " << indexZnach << endl;
+			
 			int col_zap = 0;
 			for (int t = indexZnach; data[i][t] != ']'; t++) {
 				if (data[i][t] == ',')
@@ -389,13 +389,104 @@ string hasAmount(string rules, vector<string>& data)
 		res += " - ";
 	}
 
-	 cout << res << endl;
+	// cout << res << endl;
 	return res;
 }
 
 string hasOne(string rules, vector<string>& data)
 {
-	return rules;
+	//Индекс вхождения слова HasAmount в rules
+	int x = rules.find("HasOne");
+
+	int indexColZn = rules.rfind(",");
+
+	//Индекс начала вхождения названия свойства в rules
+	x += size("HasOne");
+
+
+	
+
+	//int rul_size = indexColZn - x;
+	//Строка, содержащая название свойства
+	int c = rules.size() - indexColZn;
+	int y = rules.size() - c;
+	y -= x;
+	string Nalichie = rules.substr(x, y);
+
+	//Индекс вхождения первой запятой в rules
+	int g = rules.find(",");
+	//cout << "Nalichie= " << Nalichie << endl;
+
+	//Строка, содержащая название класса
+	string Klass = rules.substr(0, g);
+
+	//Задаём результат
+	string res = "\"" + Klass + "\": ";
+
+	int kol_vo_el = 0;
+
+
+	//Выяснить количество значений в правиле
+
+	string Zn_str = rules.substr((indexColZn + 1), rules.size());
+
+	for (int i = 0; i < data.size(); i++)
+	{
+		if (data[i].find(Nalichie) != string::npos)
+		{
+			//Индекс начала значений
+			int indexZnach = data[i].find(Nalichie) + Nalichie.size() + 1;
+			
+
+			bool zap = false;
+			int PravScob;
+			
+			//Ищем конец значений
+			for (int t = indexZnach; data[i][t]!=']'; t++) {
+				PravScob = t;
+			}
+			PravScob++;
+			//cout << "Скобка Индекс = " << PravScob << endl;
+			//cout << "Длина строки = " << data[i].size() << endl;
+			string copy = data[i].substr(indexZnach+1, PravScob-indexZnach-1);
+			string copy_zn;
+			
+			int u = 0;
+			while (u<copy.size()) {
+				if (copy[u] == ',') {
+					if (copy_zn == Zn_str) {
+						zap = true;
+					}
+					copy_zn = "";
+					u++;
+				}
+				copy_zn += copy[u];
+				
+				u++;
+			}
+			
+			if (zap==true) {
+
+				int gov = data[i].find(":");
+				string nameEl = data[i].substr(0, gov);
+
+				if (kol_vo_el == 0) {
+					res += nameEl;
+				}
+				if (kol_vo_el != 0) {
+					res += ", " + nameEl;
+				}
+				kol_vo_el++;
+			}
+		}
+
+	}
+	if (kol_vo_el == 0) {
+		res += " - ";
+	}
+
+	//cout << res << endl;
+	return res;
 }
 
 string hasAll(string rules, vector<string>& data)
