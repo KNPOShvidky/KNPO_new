@@ -192,7 +192,7 @@ vector<string> divideIntoClasses(vector<string>& arrayStrings)
 	vector<string> result;
 	for (int i = 0; i < rules.size(); i++)
 	{
-		cout << "\nHAS_PROP V " << i << " STROKE = "<< rules[i].find("HasProp") << endl << endl;
+		//cout << "\nHAS_PROP V " << i << " STROKE = "<< rules[i].find("HasProp") << endl << endl;
 
 
 		if (rules[i].find("HasProp")!= string::npos)
@@ -224,6 +224,10 @@ vector<string> divideIntoClasses(vector<string>& arrayStrings)
 		}
 		
 	}
+
+	/*for (int k = 0; k < result.size(); k++) {
+		cout << "Result: " << result[k] << endl;
+	}*/
 
 	return result;
 }
@@ -260,7 +264,7 @@ void razelenieDannyx(vector<string>& arrayStrings, vector<string>& rules, vector
 
 string hasProp(string rules, vector<string>& data)
 {
-	cout << "Rules= " << rules<<endl<<endl;
+	
 	//Индекс вхождения слова HasProp в rules
 	int x = rules.find("HasProp");
 
@@ -274,7 +278,7 @@ string hasProp(string rules, vector<string>& data)
 
 	//Индекс вхождения первой запятой в rules
 	int g = rules.find(",");
-	cout << "Nalichie= " << Nalichie << endl;
+	//cout << "Nalichie= " << Nalichie << endl;
 
 	//Строка, содержащая название класса
 	string Klass = rules.substr(0, g);
@@ -284,9 +288,6 @@ string hasProp(string rules, vector<string>& data)
 
 	int kol_vo_el = 0;
 
-	for (int d = 0; d < data.size(); d++) {
-		cout << d << "-е Данное = " << data[d] << endl;
-	}
 
 	for (int i = 0; i < data.size(); i++)
 	{
@@ -307,14 +308,65 @@ string hasProp(string rules, vector<string>& data)
 		}
 		
 	}
+	if (kol_vo_el == 0) {
+		res += " - ";
+	}
 
-	cout << res<<endl;
-	return Klass;
+	// cout << res << endl;
+	return res;
 }
 
 string hasAmount(string rules, vector<string>& data)
 {
-	return rules;
+	//Индекс вхождения слова HasProp в rules
+	int x = rules.find("HasProp");
+
+	//Индекс начала вхождения названия свойства в rules
+	x += size("HasProp");
+
+	int rul_size = rules.size() - x;
+	//Строка, содержащая название свойства
+
+	string Nalichie = rules.substr(x, rul_size);
+
+	//Индекс вхождения первой запятой в rules
+	int g = rules.find(",");
+	//cout << "Nalichie= " << Nalichie << endl;
+
+	//Строка, содержащая название класса
+	string Klass = rules.substr(0, g);
+
+	//Задаём результат
+	string res = "\"" + Klass + "\": ";
+
+	int kol_vo_el = 0;
+
+
+	for (int i = 0; i < data.size(); i++)
+	{
+		if (data[i].find(Nalichie) != string::npos)
+		{
+
+			int gov = data[i].find(":");
+
+			string nameEl = data[i].substr(0, gov);
+
+			if (kol_vo_el == 0) {
+				res += nameEl;
+			}
+			if (kol_vo_el != 0) {
+				res += ", " + nameEl;
+			}
+			kol_vo_el++;
+		}
+
+	}
+	if (kol_vo_el == 0) {
+		res += " - ";
+	}
+
+	// cout << res << endl;
+	return res;
 }
 
 string hasOne(string rules, vector<string>& data)
