@@ -16,6 +16,6 @@ string hasOne(string rules, vector<string>& data);
 
 string hasAll(string rules, vector<string>& data);
 
-bool correctRules(string str);
+bool correctRules(string str, int num);
 
 bool correctData(string str, int num);

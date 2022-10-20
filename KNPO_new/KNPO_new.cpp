@@ -255,6 +255,12 @@ void razelenieDannyx(vector<string>& arrayStrings, vector<string>& rules, vector
 	for (int i = 0; i < data.size(); i++) {
 		
 		correctData(data[i],i);
+	
+	}
+	for (int i = 0; i < rules.size(); i++) {
+
+		correctRules(rules[i], i);
+
 	}
 	
 }
@@ -572,18 +578,30 @@ string hasAll(string rules, vector<string>& data)
 
 //Функция проверки корректности Правил
 bool correctRules(string str,int num) {
+	//Количество запятых в строке
 	int col_zap = 0;
-	if (str.find("HasProp")){
-		for (int i; i < str.size(); i++) {
+	
+	//Если в строке есть пробелы
+	if (str.find(" ")!=string::npos)
+	{
+		cout << "Лишние пробелы в правиле #" << num << endl;
+		return false;
+	}
+	//Если в строке есть HasProp
+	if (str.find("HasProp") != string::npos){
+		for (int i=0; i < str.size(); i++) {
 			if (str[i] == ',') {
 				col_zap++;
 			}
-			if (!isalnumRus(str[i]) || str[i] != ',') {
+			//Если в правиле есть недопустимые символы
+			int isal = isalnumRus(str[i]);
+			if (isalnumRus(str[i]) == 0 && str[i] != ',') {
+				cout << "Недопустимые символы в правиле #" << num<<endl;
 				return false;
 			}
 		}
 		if (col_zap != 2) {
-			cout << "Недостаточное количество запятых в правиле #" << num;
+			cout << "Недостаточное количество аргументов в правиле #" << num << endl;
 			return false;
 		}
 		else {
@@ -591,17 +609,96 @@ bool correctRules(string str,int num) {
 		}
 
 	}
-	else if (str.find("HasAmount")) {
-
+	//Если в строке есть HasAmount
+	else if (str.find("HasAmount") != string::npos) {
+		for (int i=0; i < str.size(); i++) {
+			if (str[i] == ',') {
+				col_zap++;
+			}
+			//Если в правиле есть недопустимые символы
+			if (isalnumRus(str[i])==0 || str[i] != ',') {
+				cout << "Недопустимые символы в правиле #" << num << endl;
+				return false;
+			}
+		}
+		if (col_zap != 3) {
+			cout << "Недостаточное количество аргументов в правиле #" << num << endl;
+			return false;
+		}
+		else {
+			return true;
+		}
 	}
-	else if (str.find("HasOne")) {
-
+	//Если в строке есть HasOne
+	else if (str.find("HasOne") != string::npos) {
+	
+		for (int i=0; i < str.size(); i++) {
+			if (str[i] == ',') {
+				col_zap++;
+			}
+			//Если в правиле есть недопустимые символы
+			if (isalnumRus(str[i]) ==0|| str[i] != ',') {
+				cout << "Недопустимые символы в правиле #" << num << endl;
+				return false;
+			}
+		}
+		if (col_zap != 3) {
+			cout << "Недостаточное количество аргументов в правиле #" << num << endl;
+			return false;
+		}
+		else {
+			return true;
+		}
 	}
-	else if (str.find("HasAll")) {
+	//Если в строке есть правило HasAll
+	else if (str.find("HasAll") != string::npos) {
+		//Индекс вождения левой скобки
+		int index_left;
+		//Индекс вождения правой скобки
+		int index_right;
 
+		//Если в строке нет скобок
+		if (str.find("[") == string::npos|| str.find("]") == string::npos) {
+			cout << "Неправильно введены скобки для значений для главного правила HasAll в правиле #" << num << endl;
+			return false;
+		}
+
+		for (int i=0; i < str.size(); i++) {
+			//Если в правиле есть недопустимые символы
+			if (isalnumRus(str[i]) ==0|| str[i] != ',' || str[i] != '[' || str[i] != ']') {
+				cout << "Недопустимые символы в правиле #" << num << endl;
+				return false;
+			}
+			
+			if (str[i] == '[') {
+				if (str[i - 1] != ',') {
+					cout << "Неправильно введены скобки для значений для главного правила HasAll в правиле #" << num << endl;
+				}
+				else if (isalnumRus(str[i + 1])==0) {
+					cout << "Неправильно введены значения для главного правила HasAll в правиле #" << num << endl;
+				}
+				else {
+					return true;
+				}
+			}
+
+			if (str[i] == ']') {
+				if (isalnumRus(str[i- 1])==0) {
+					cout << "Неправильно введены значения для главного правила HasAll в правиле #" << num << endl;
+				}
+				else if (i+1!=str.size()) {
+					cout << "Неправильно введены значения для главного правила HasAll в правиле #" << num << endl;
+				}
+				else {
+					return true;
+				}
+			}
+		}
+		
 	}
+	//Если в строке правила нет правил
 	else {
-		cout << "Не указано правило в строке #" << num;
+		cout << "Не указано главное правило правило в строке #" << num << endl;
 		return false;
 	}
 
