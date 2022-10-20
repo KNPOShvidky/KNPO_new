@@ -138,7 +138,7 @@ int main() {
 	
 	//Функция для разделения файла на правила и данные
 	
-	vector<string> poh = divideIntoClasses(arrayStrings);
+	vector<string> result = divideIntoClasses(arrayStrings);
 
 	//Вызывается объект ofstream для записи данных в файл 
 	ofstream fout;
@@ -165,9 +165,9 @@ int main() {
 	fout.clear();
 
 	//Отправляем полученные результаты в файл.
-	for (int i = 0; i < sizeOfVect; i++)
+	for (int i = 0; i < result.size(); i++)
 	{
-		fout << arrayStrings[i] << "\n";
+		fout << result[i] << "\n";
 	}
 
 	fin.close();
@@ -575,9 +575,15 @@ string hasAll(string rules, vector<string>& data)
 			string copy = data[i].substr(indexZnach, PravScob - indexZnach+1 );
 			string copy_zn;
 		
-			
+			bool soderjit=true;
+			for (int i = 0; i < znach.size(); i++) {
 
-			if (Zn_str==copy) {
+				if (copy.find(znach[i]) == string::npos) {
+					soderjit = false;
+				}
+			}
+
+			if (soderjit) {
 
 				int gov = data[i].find(":");
 				string nameEl = data[i].substr(0, gov);
