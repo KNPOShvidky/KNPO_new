@@ -374,7 +374,7 @@ string hasAmount(string rules, vector<string>& data)
 					col_zap++;
 			}
 
-			if (col_zap == ColZn_int-1) {
+			if (col_zap >= ColZn_int-1) {
 
 				int gov = data[i].find(":");
 				string nameEl = data[i].substr(0, gov);
@@ -584,24 +584,30 @@ bool correctRules(string str,int num) {
 	//Если в строке есть пробелы
 	if (str.find(" ")!=string::npos)
 	{
-		cout << "Лишние пробелы в правиле #" << num << endl;
+		cout << "Лишние пробелы в правиле #" << num+1 << endl;
 		return false;
 	}
 	//Если в строке есть HasProp
 	if (str.find("HasProp") != string::npos){
 		for (int i=0; i < str.size(); i++) {
-			if (str[i] == ',') {
+			if (str[i] == ',') 
+			{
+				if (isalnumRus(str[i + 1]) == 0 || isalnumRus(str[i - 1]) == 0)
+				{
+					cout << "Недопустимая запись запятой в правиле #" << num+1 << endl;
+					return false;
+				}
 				col_zap++;
 			}
 			//Если в правиле есть недопустимые символы
-			int isal = isalnumRus(str[i]);
+			
 			if (isalnumRus(str[i]) == 0 && str[i] != ',') {
-				cout << "Недопустимые символы в правиле #" << num<<endl;
+				cout << "Недопустимые символы в правиле #" << num+1<<endl;
 				return false;
 			}
 		}
 		if (col_zap != 2) {
-			cout << "Недостаточное количество аргументов в правиле #" << num << endl;
+			cout << "Недостаточное количество аргументов в правиле #" << num+1 << endl;
 			return false;
 		}
 		else {
@@ -613,16 +619,22 @@ bool correctRules(string str,int num) {
 	else if (str.find("HasAmount") != string::npos) {
 		for (int i=0; i < str.size(); i++) {
 			if (str[i] == ',') {
+				if (isalnumRus(str[i + 1]) == 0 || isalnumRus(str[i - 1]) == 0)
+				{
+					cout << "Недопустимая запись запятой в правиле #" << num + 1 << endl;
+					return false;
+				}
 				col_zap++;
 			}
 			//Если в правиле есть недопустимые символы
-			if (isalnumRus(str[i])==0 || str[i] != ',') {
-				cout << "Недопустимые символы в правиле #" << num << endl;
+			if (isalnumRus(str[i])==0 && str[i] != ',') {
+
+				cout << "Недопустимые символы в правиле #" << num+1 << endl;
 				return false;
 			}
 		}
 		if (col_zap != 3) {
-			cout << "Недостаточное количество аргументов в правиле #" << num << endl;
+			cout << "Недостаточное количество аргументов в правиле #" << num+1 << endl;
 			return false;
 		}
 		else {
@@ -634,16 +646,21 @@ bool correctRules(string str,int num) {
 	
 		for (int i=0; i < str.size(); i++) {
 			if (str[i] == ',') {
+				if (isalnumRus(str[i + 1]) == 0 || isalnumRus(str[i - 1]) == 0)
+				{
+					cout << "Недопустимая запись запятой в правиле #" << num + 1 << endl;
+					return false;
+				}
 				col_zap++;
 			}
 			//Если в правиле есть недопустимые символы
-			if (isalnumRus(str[i]) ==0|| str[i] != ',') {
-				cout << "Недопустимые символы в правиле #" << num << endl;
+			if (isalnumRus(str[i]) ==0 && str[i] != ',') {
+				cout << "Недопустимые символы в правиле #" << num+1 << endl;
 				return false;
 			}
 		}
 		if (col_zap != 3) {
-			cout << "Недостаточное количество аргументов в правиле #" << num << endl;
+			cout << "Недостаточное количество аргументов в правиле #" << num+1 << endl;
 			return false;
 		}
 		else {
@@ -659,35 +676,42 @@ bool correctRules(string str,int num) {
 
 		//Если в строке нет скобок
 		if (str.find("[") == string::npos|| str.find("]") == string::npos) {
-			cout << "Неправильно введены скобки для значений для главного правила HasAll в правиле #" << num << endl;
+			cout << "Неправильно введены скобки для значений для главного правила HasAll в правиле #" << num+1 << endl;
 			return false;
 		}
-
+	
 		for (int i=0; i < str.size(); i++) {
 			//Если в правиле есть недопустимые символы
-			if (isalnumRus(str[i]) ==0|| str[i] != ',' || str[i] != '[' || str[i] != ']') {
-				cout << "Недопустимые символы в правиле #" << num << endl;
+			if (isalnumRus(str[i]) ==0 && str[i] != ',' && str[i] != '[' && str[i] != ']') {
+				cout << "Недопустимые символы в правиле #" << num+1 << endl;
 				return false;
 			}
-			
-			if (str[i] == '[') {
+
+			if (str[i] == ',') 
+			{
+				if ((isalnumRus(str[i + 1]) == 0 && isalnumRus(str[i - 1]) == 0) ||(isalnumRus(str[i - 1]) == 0 && str[i+1]!=']'))
+				{
+					cout << "Недопустимая запись запятой в правиле #" << num + 1 << endl;
+					return false;
+				}
+			}else if (str[i] == '[') {
 				if (str[i - 1] != ',') {
-					cout << "Неправильно введены скобки для значений для главного правила HasAll в правиле #" << num << endl;
+					cout << "Неправильно введены скобки для значений для главного правила HasAll в правиле #" << num+1 << endl;
 				}
 				else if (isalnumRus(str[i + 1])==0) {
-					cout << "Неправильно введены значения для главного правила HasAll в правиле #" << num << endl;
+					cout << "Неправильно введены значения для главного правила HasAll в правиле #" << num+1 << endl;
 				}
 				else {
 					return true;
 				}
 			}
 
-			if (str[i] == ']') {
+			else if (str[i] == ']') {
 				if (isalnumRus(str[i- 1])==0) {
-					cout << "Неправильно введены значения для главного правила HasAll в правиле #" << num << endl;
+					cout << "Неправильно введены значения для главного правила HasAll в правиле #" << num+1 << endl;
 				}
 				else if (i+1!=str.size()) {
-					cout << "Неправильно введены значения для главного правила HasAll в правиле #" << num << endl;
+					cout << "Неправильно введены значения для главного правила HasAll в правиле #" << num+1 << endl;
 				}
 				else {
 					return true;
@@ -698,7 +722,7 @@ bool correctRules(string str,int num) {
 	}
 	//Если в строке правила нет правил
 	else {
-		cout << "Не указано главное правило правило в строке #" << num << endl;
+		cout << "Не указано главное правило правило в строке #" << num+1 << endl;
 		return false;
 	}
 
