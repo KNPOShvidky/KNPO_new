@@ -491,7 +491,84 @@ string hasOne(string rules, vector<string>& data)
 
 string hasAll(string rules, vector<string>& data)
 {
-	return rules;
+	//Индекс вхождения слова HasAll в rules
+	int x = rules.find("HasAll");
+	int indexColZn_left = rules.find("[");
+	int indexColZn_right = rules.find("]");
+
+
+	//Индекс начала вхождения названия свойства в rules
+	x += size("HasAll");
+
+
+
+
+	//int rul_size = indexColZn - x;
+	//Строка, содержащая название свойства
+	
+	string Nalichie = rules.substr(x, indexColZn_left-x-1);
+	
+	//Индекс вхождения первой запятой в rules
+	int g = rules.find(",");
+
+
+	//Строка, содержащая название класса
+	string Klass = rules.substr(0, g);
+
+	//Задаём результат
+	string res = "\"" + Klass + "\": ";
+
+	int kol_vo_el = 0;
+
+
+	//Выяснить значения в правиле
+	
+	string Zn_str = rules.substr((indexColZn_left+1), (indexColZn_right-indexColZn_left-1));
+
+
+	for (int i = 0; i < data.size(); i++)
+	{
+		if (data[i].find(Nalichie) != string::npos)
+		{
+			//Индекс начала значений
+			int indexZnach = data[i].find(Nalichie) + Nalichie.size() + 2;
+			
+
+			bool zap = false;
+			int PravScob;
+
+			//Ищем конец значений
+			for (int t = indexZnach; data[i][t] != ']'; t++) {
+				PravScob = t;
+			}
+		
+			string copy = data[i].substr(indexZnach, PravScob - indexZnach+1 );
+			string copy_zn;
+		
+			
+
+			if (Zn_str==copy) {
+
+				int gov = data[i].find(":");
+				string nameEl = data[i].substr(0, gov);
+
+				if (kol_vo_el == 0) {
+					res += nameEl;
+				}
+				if (kol_vo_el != 0) {
+					res += ", " + nameEl;
+				}
+				kol_vo_el++;
+			}
+		}
+
+	}
+	if (kol_vo_el == 0) {
+		res += " - ";
+	}
+
+	//cout << res << endl;
+	return res;
 }
 
 bool correctRules(string str) {
