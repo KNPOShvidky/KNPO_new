@@ -2,6 +2,7 @@
 #include <vector>
 
 using namespace std;
+int isalnumRus(const char  sym);
 
 vector<string> divideIntoClasses(vector<string>& arrayStrings);
 
@@ -14,3 +15,4 @@ string hasAmount(string rules, vector<string>& data);
 string hasOne(string rules, vector<string>& data);
 
 string hasAll(string rules, vector<string>& data);
+bool correctData(string str);

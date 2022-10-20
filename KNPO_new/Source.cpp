@@ -2,7 +2,7 @@
 #include <string>
 #include <fstream>
 #include "Header.h"
-
+#include <Windows.h>
 using namespace std;
 
 int main() {
@@ -234,33 +234,32 @@ vector<string> divideIntoClasses(vector<string>& arrayStrings)
 //
 
 void razelenieDannyx(vector<string>& arrayStrings, vector<string>& rules, vector<string>& data) {
-	
-	int i =0;
-	while (arrayStrings[i+1] != "Данные:") {
+	bool correctData_bool = true;
+	int i = 0;
+	while (arrayStrings[i + 1] != "Данные:") {
 		rules.resize(i + 1);
-		rules[i] = arrayStrings[i+1];
+		rules[i] = arrayStrings[i + 1];
 		i++;
 	}
-	
+
 
 	int sizeArray = arrayStrings.size();
 
 	int k = 0;
-	for (int j = i+2; j < sizeArray; j++)
+	for (int j = i + 2; j < sizeArray; j++)
 	{
 		data.resize(k + 1);
 		data[k] = arrayStrings[j];
 		k++;
 	}
-	
+
+	for (int i = 0; i < data.size(); i++) {
+		cout << "Prov Stroka: " << data[i] << endl;
+		correctData(data[i]);
+	}
 	
 }
-//Говно HasProp
-/*
-Тут он прогоняет все строки Данных и смотрит, есть ли в них нужные слова
-Плюс проверяет каждую строку на адекватность
 
-*/
 
 string hasProp(string rules, vector<string>& data)
 {
@@ -282,6 +281,8 @@ string hasProp(string rules, vector<string>& data)
 
 	//Строка, содержащая название класса
 	string Klass = rules.substr(0, g);
+	int index = data[0].rfind("]");
+	int kol = data[0].size();
 
 	//Задаём результат
 	string res = "\""+Klass + "\": ";
@@ -583,45 +584,102 @@ bool correctData(string str) {
 	//"Грубая" проверка корректности(наличия нужных символов)
 	if (str.find("=") == string::npos) { //В строке данных нет равно
 		res = false;
+		cout << "В строке данных нет равно";
+		exit(1);
 	}else if (str.find(":") == string::npos) { //В строке данных нет двоеточия
 		res = false;
+		cout << "В строке данных нет двоеточия";
+		exit(2);
 	}
 	else if (str.find("[") == string::npos || str.find("]") == string::npos) { //В строке данных нет квадратных скобок
 		res = false;
+		cout << "В строке данных нет квадратных скобок";
+		exit(3);
 	}
 	else if (str.find("=") < str.find(":")) {//В строке данных двоеточие правее знака равно
 		res = false;
+		cout << "В строке данных двоеточие правее знака равно";
+		exit(4);
 	}
-	
+
 
 		//Посимвольная проверка на корректность
 		for (int i = 0; i < str.size(); i++) 
 		{
-			if (isalnum(str[i]) == false)	//Если символ не буква и не цифра
+			if (isalnumRus(str[i]) == false)	//Если символ не буква и не цифра
 			{
 				if (str[i] == ':') {	//Если символ двоеточие
+					cout << "sleva = " << str[i - 1] << endl;
+					cout << "sprava = " << str[i + 1] << endl;
+					cout << "slevaBool = " << isalnumRus(str[i - 1])<<endl;
+					cout << "spravaBool = " << isalnumRus(str[i + 1])<<endl;
+
+
+					if (isalnumRus(str[i - 1]) == false || isalnumRus(str[i + 1]) == false) {
+						res = false;
+						cout << "Двоеточние указано не по правилам";
+						exit(5);
+
+					}
 
 				}
 				else if (str[i] == '=') {	//Если символ равно
+					if (isalnumRus(str[i - 1]) == false || str[i + 1] != '[') {
+						res = false;
+						cout << "Равно указано не по правилам";
+						exit(5);
 
+					}
 				}
-				else if (str[i]=='[') {	//Если символ левая скобка
+				else if (str[i] == '[') {	//Если символ левая скобка
+					if (str[i - 1] != '=' || isalnumRus(str[i + 1]) == false) {
+						res = false;
+						cout << "Левая скобка указана не по правилам";
+						exit(5);
 
+					}
 				}
 				else if (str[i] == ']') {	//Если символ правая скобка
+					if (i + 1 == str.size() && isalnumRus(str[i - 1]) == false) {
+						res = false;
+						cout << "Правая скобка указана не по правилам 1";
+						exit(6);
 
+					}
+					else if (isalnumRus(str[i - 1]) == false || str[i + 1] != ',') {
+						res = false;
+						cout << "Правая скобка указана не по правилам 2";
+						exit(6);
+
+					}
 				}
 				else if (str[i] == ',') {	//Если символ запятая
+					if (isalnumRus(str[i - 1]) == false && isalnumRus(str[i + 1]) == false || isalnumRus(str[i + 1]) == false && str[i - 1] != ']') {
+						res = false;
+						cout << "Правая скобка указана не по правилам 3";
+						exit(6);
 
+					}
 				}
+			}
 				else {	//Недопустимый символ
 					res = false; 
+					cout << "В данных есть недопустимых символ";
+					exit(7);
 				}
 
-			}
+			
 		}
 	
 
 		return res;
 
+}
+
+
+int isalnumRus(const char  sym)
+{
+	return ((sym >= 'А') && (sym <= 'Я') ||
+		(sym >= 'а') && (sym <= 'я') || (sym >= 'A') && (sym <= 'Z') || (sym >= 'a') && (sym <= 'z') ||
+		(sym >= '0') && (sym <= '9'));
 }
