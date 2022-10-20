@@ -15,4 +15,7 @@ string hasAmount(string rules, vector<string>& data);
 string hasOne(string rules, vector<string>& data);
 
 string hasAll(string rules, vector<string>& data);
-bool correctData(string str);
+
+bool correctRules(string str);
+
+bool correctData(string str, int num);

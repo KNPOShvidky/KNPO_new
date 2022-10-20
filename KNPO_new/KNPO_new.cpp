@@ -231,10 +231,9 @@ vector<string> divideIntoClasses(vector<string>& arrayStrings)
 
 	return result;
 }
-//
 
 void razelenieDannyx(vector<string>& arrayStrings, vector<string>& rules, vector<string>& data) {
-	bool correctData_bool = true;
+	
 	int i = 0;
 	while (arrayStrings[i + 1] != "Данные:") {
 		rules.resize(i + 1);
@@ -254,12 +253,11 @@ void razelenieDannyx(vector<string>& arrayStrings, vector<string>& rules, vector
 	}
 
 	for (int i = 0; i < data.size(); i++) {
-		cout << "Prov Stroka: " << data[i] << endl;
-		correctData(data[i]);
+		
+		correctData(data[i],i);
 	}
 	
 }
-
 
 string hasProp(string rules, vector<string>& data)
 {
@@ -440,7 +438,7 @@ string hasOne(string rules, vector<string>& data)
 			
 
 			bool zap = false;
-			int PravScob;
+			int PravScob = 0;   // Иниц 
 			
 			//Ищем конец значений
 			for (int t = indexZnach; data[i][t]!=']'; t++) {
@@ -536,7 +534,7 @@ string hasAll(string rules, vector<string>& data)
 			
 
 			bool zap = false;
-			int PravScob;
+			int PravScob = 0;
 
 			//Ищем конец значений
 			for (int t = indexZnach; data[i][t] != ']'; t++) {
@@ -572,16 +570,48 @@ string hasAll(string rules, vector<string>& data)
 	return res;
 }
 
-bool correctRules(string str) {
-	bool res=false;
-	return res;
+//Функция проверки корректности Правил
+bool correctRules(string str,int num) {
+	int col_zap = 0;
+	if (str.find("HasProp")){
+		for (int i; i < str.size(); i++) {
+			if (str[i] == ',') {
+				col_zap++;
+			}
+			if (!isalnumRus(str[i]) || str[i] != ',') {
+				return false;
+			}
+		}
+		if (col_zap != 2) {
+			cout << "Недостаточное количество запятых в правиле #" << num;
+			return false;
+		}
+		else {
+			return true;
+		}
+
+	}
+	else if (str.find("HasAmount")) {
+
+	}
+	else if (str.find("HasOne")) {
+
+	}
+	else if (str.find("HasAll")) {
+
+	}
+	else {
+		cout << "Не указано правило в строке #" << num;
+		return false;
+	}
 
 }
 
-bool correctData(string str) {
+//Функция корректности Данных
+bool correctData(string str, int num) {
 	bool res = true;
 
-	//"Грубая" проверка корректности(наличия нужных символов)
+	//"Грубая" проверка корректности(наличия нужных символов)	
 	if (str.find("=") == string::npos) { //В строке данных нет равно
 		res = false;
 		cout << "В строке данных нет равно";
@@ -601,20 +631,35 @@ bool correctData(string str) {
 		cout << "В строке данных двоеточие правее знака равно";
 		exit(4);
 	}
+	else if (str.find(" ") != string::npos) {
+		res = false;
+		cout << "В строке данных #"<<num+1<<  " присутствуют лишние пробелы";
+		exit(10);
+	}
 
 
+	int col_vo_ravno=0;
+	int col_vo_left=0;
+	int col_vo_right=0;
+	
 		//Посимвольная проверка на корректность
 		for (int i = 0; i < str.size(); i++) 
 		{
+			if (str[i] == '=') {
+				col_vo_ravno++;
+			}
+
+			if (str[i] == '[') {
+				col_vo_left++;
+			}
+
+			if (str[i] == ']') {
+				col_vo_right++;
+			}
+
 			if (isalnumRus(str[i]) == false)	//Если символ не буква и не цифра
 			{
 				if (str[i] == ':') {	//Если символ двоеточие
-					cout << "sleva = " << str[i - 1] << endl;
-					cout << "sprava = " << str[i + 1] << endl;
-					cout << "slevaBool = " << isalnumRus(str[i - 1])<<endl;
-					cout << "spravaBool = " << isalnumRus(str[i + 1])<<endl;
-
-
 					if (isalnumRus(str[i - 1]) == false || isalnumRus(str[i + 1]) == false) {
 						res = false;
 						cout << "Двоеточние указано не по правилам";
@@ -632,48 +677,68 @@ bool correctData(string str) {
 					}
 				}
 				else if (str[i] == '[') {	//Если символ левая скобка
-					if (str[i - 1] != '=' || isalnumRus(str[i + 1]) == false) {
+					if (str[i - 1] != '=') {
 						res = false;
-						cout << "Левая скобка указана не по правилам";
+						cout << "В строке данных #"<<num+1<<" отсутствует равно";	//Если нет равно перед скобкой
 						exit(5);
-
+					}
+					else if (isalnumRus(str[i + 1]) == false) {	//если внутри скобки нет значений
+						res = false;
+						cout << "В строке данных #" << num+1 << " отсутствует значение";
+						exit(5);
 					}
 				}
 				else if (str[i] == ']') {	//Если символ правая скобка
-					if (i + 1 == str.size() && isalnumRus(str[i - 1]) == false) {
+					if (i+1 == str.size() ) {	//Если Правая скобка - последняя в строке
+						if (isalnumRus(str[i - 1]) == false) {
+							res = false;
+							cout << "В строке данных #" << num + 1 << " отсутствует значение";
+							exit(6);
+						}
+					}
+					else if (isalnumRus(str[i - 1]) == false){	//Если 	
 						res = false;
-						cout << "Правая скобка указана не по правилам 1";
+						cout << "В строке данных #" << num + 1 << " отсутствует значение";
 						exit(6);
 
 					}
-					else if (isalnumRus(str[i - 1]) == false || str[i + 1] != ',') {
+					else if (str[i + 1] != ',') {	//Если нет запятой между свойствами
 						res = false;
-						cout << "Правая скобка указана не по правилам 2";
+						cout << "В строке данных #" << num + 1 << " отсутствует запятая";
 						exit(6);
-
 					}
 				}
 				else if (str[i] == ',') {	//Если символ запятая
-					if (isalnumRus(str[i - 1]) == false && isalnumRus(str[i + 1]) == false || isalnumRus(str[i + 1]) == false && str[i - 1] != ']') {
+					if (isalnumRus(str[i - 1]) == false && isalnumRus(str[i + 1]) == false) {	//Запятая в значениях
 						res = false;
-						cout << "Правая скобка указана не по правилам 3";
+						cout << "В строке данных #" << num + 1 << " отсутствует значение";
 						exit(6);
 
 					}
+					else if (isalnumRus(str[i + 1]) == false && str[i - 1] != ']') {	//Запятая между свойств
+						res = false;
+						cout << "В строке данных #" << num + 1 << " найдена ошибка значений";
+						exit(1);
+					}
 				}
 			}
-				else {	//Недопустимый символ
+			else if (isalnumRus(str[i])) {
+
+			}
+			else {	//Недопустимый символ
 					res = false; 
 					cout << "В данных есть недопустимых символ";
 					exit(7);
 				}
-
-			
-		}
 	
-
+		}
+		if (col_vo_left != col_vo_ravno || col_vo_right != col_vo_ravno) {
+			res = false;
+			cout << "Некорректные введённые данные";
+			exit(7);
+		}
 		return res;
-
+		
 }
 
 
