@@ -580,27 +580,47 @@ bool correctRules(string str) {
 bool correctData(string str) {
 	bool res = true;
 
-	//В строке данных нет двоеточия
-	if (str.find("=") == string::npos) {
+	//"Грубая" проверка корректности(наличия нужных символов)
+	if (str.find("=") == string::npos) { //В строке данных нет равно
 		res = false;
-	}else if (str.find(":") == string::npos) {
-		res = false;
-	}
-	else if (str.find("[") == string::npos || str.find("]") == string::npos) {
+	}else if (str.find(":") == string::npos) { //В строке данных нет двоеточия
 		res = false;
 	}
-	else if (str.find("[") == string::npos || str.find("]") == string::npos) {
+	else if (str.find("[") == string::npos || str.find("]") == string::npos) { //В строке данных нет квадратных скобок
+		res = false;
+	}
+	else if (str.find("=") < str.find(":")) {//В строке данных двоеточие правее знака равно
 		res = false;
 	}
 	
-	/*else if (str.find("=") < str.find(":") || str.find("=")  str.find("[")||str.find("=") < str.find("]")) {
-		res = false;
-	}*/
 
-	for (int i = 0; i < str.size(); i++) {
+		//Посимвольная проверка на корректность
+		for (int i = 0; i < str.size(); i++) 
+		{
+			if (isalnum(str[i]) == false)	//Если символ не буква и не цифра
+			{
+				if (str[i] == ':') {	//Если символ двоеточие
 
-	}
+				}
+				else if (str[i] == '=') {	//Если символ равно
 
+				}
+				else if (str[i]=='[') {	//Если символ левая скобка
+
+				}
+				else if (str[i] == ']') {	//Если символ правая скобка
+
+				}
+				else if (str[i] == ',') {	//Если символ запятая
+
+				}
+				else {	//Недопустимый символ
+					res = false; 
+				}
+
+			}
+		}
+	
 
 		return res;
 
