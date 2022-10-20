@@ -510,9 +510,9 @@ string hasAll(string rules, vector<string>& data)
 
 	//int rul_size = indexColZn - x;
 	//Строка, содержащая название свойства
-	
-	string Nalichie = rules.substr(x, indexColZn_left-x-1);
-	
+
+	string Nalichie = rules.substr(x, indexColZn_left - x - 1);
+
 	//Индекс вхождения первой запятой в rules
 	int g = rules.find(",");
 
@@ -527,10 +527,35 @@ string hasAll(string rules, vector<string>& data)
 
 
 	//Выяснить значения в правиле
-	
-	string Zn_str = rules.substr((indexColZn_left+1), (indexColZn_right-indexColZn_left-1));
 
+	string Zn_str = rules.substr((indexColZn_left + 1), (indexColZn_right - indexColZn_left - 1));
+	vector<string> znach;
+	int p = 0;
+	string promej;
+	int y = 0;
+	cout << "Zn_str = " << Zn_str << endl;
 
+	for (int i = 0; i <= Zn_str.size(); i++) {
+
+		if (Zn_str[i] == ','|| i==Zn_str.size())
+		{
+			p++;
+		znach.resize(p);
+		znach[y] = promej;
+		y++;
+		
+		promej = "";
+		continue;
+		}
+
+		promej += Zn_str[i];
+	}
+
+	for (int i = 0; i < znach.size(); i++) {
+		cout << i << "-й = " << znach[i] << endl;
+	}
+
+	//Ищем соответствия с данными
 	for (int i = 0; i < data.size(); i++)
 	{
 		if (data[i].find(Nalichie) != string::npos)
